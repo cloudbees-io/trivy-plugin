@@ -1,0 +1,50 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: action
+name: trivy-hybrid
+
+inputs:
+  binary-tar-path:
+    description: 'Path to the binary to scan'
+    required: true
+
+  license:
+    description: 'Flag to enable license scanning (true/false)'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Generate reference files 
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:d14621a0e281098b736a3d21cc92edd1fdc8b504
+      with:
+          entrypoint: assets-plugin-chain-utils
+          args: generate-references --asset-type "BINARY" --tags "BINARY_CONTAINER" --binary-tar-path ${{ inputs.binary-tar-path }}
+      env:
+          INPUT_CLOUDBEES_API_TOKEN: ${{ cloudbees.api.token }}
+          INPUT_CLOUDBEES_API_URL: ${{ cloudbees.api.url }}
+          INPUT_RUN_ID: ${{ cloudbees.run_id }}
+
+    - name: Run trivy compliance plugin
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-trivy-scanner:90ac7296abb2c0c877b3364b5ce21ccf50cb0353
+      env:
+          RUN_ID: ${{ cloudbees.run_id }}
+          JOB_ID: ${{ job.id }}
+          STEP_ID: ${{ step.internal.id }}
+      run: |
+        if [ "${{ inputs.license }}" = "true" ]; then
+          /app/plugin-trivy-scanner -mode single -license
+        else
+          /app/plugin-trivy-scanner -mode single
+        fi
+
+    - name: Complete execution plan
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:d14621a0e281098b736a3d21cc92edd1fdc8b504
+      id: process-outputs
+      with:
+          entrypoint: assets-plugin-chain-utils
+          args: process-outputs
+      env:
+          INPUT_CLOUDBEES_API_TOKEN: ${{ cloudbees.api.token }}
+          INPUT_CLOUDBEES_API_URL: ${{ cloudbees.api.url }}
+          INPUT_RUN_ID: ${{ cloudbees.run_id }}

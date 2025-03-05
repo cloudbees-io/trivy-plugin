@@ -1,0 +1,52 @@
+= CloudBees action: Scan with Trivy
+
+Use this action to perform static application security testing (SAST) on a repository with the Gitleaks scanner.
+
+== Inputs
+
+[cols="2a,1a,1a,3a",options="header"]
+.Input details
+|===
+
+| Input name
+| Data type
+| Required?
+| Description
+
+
+| `binary-tar-path`
+| String
+| Yes
+| Specify the path of the binary that should be scanned.
+
+| `license`
+| String
+| No
+| Flag to enable license scanning.
+
+|===
+
+== Usage example
+
+In your YAML file, add:
+
+[source,yaml]
+----
+
+      - name: Scan with Trivy
+        uses: https://github.com/cloudbees-io/trivy-plugin@v1
+        with:
+          binary-tar-path: tar file path that needs to be scanned
+
+----
+
+== License
+
+This code is made available under the 
+link:https://opensource.org/license/mit/[MIT license].
+
+== References
+
+* Learn more about link:https://docs.cloudbees.com/docs/cloudbees-platform/latest/actions[using actions in CloudBees workflows].
+* Learn about link:https://docs.cloudbees.com/docs/cloudbees-platform/latest/[the CloudBees platform].
+
