@@ -1,6 +1,6 @@
 = CloudBees action: Scan with Trivy
 
-Use this action to perform static application security testing (SAST) on a repository with the Gitleaks scanner.
+Use this action to perform static application security testing (SAST) on a repository with the Trivy scanner.
 
 == Inputs
 
