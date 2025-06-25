@@ -1,6 +1,6 @@
 = CloudBees action: Scan with Trivy
 
-Use this action to perform static application security testing (SAST) on a repository with the Trivy scanner.
+Use this action to scan container images with the Trivy scanner, to identify and fix security vulnerabilities.
 
 == Inputs
 
@@ -13,16 +13,18 @@ Use this action to perform static application security testing (SAST) on a repos
 | Required?
 | Description
 
-
 | `binary-tar-path`
 | String
 | Yes
-| Specify the path of the binary that should be scanned.
+| The path of the binary to be scanned.
+
+NOTE: The binary file must be in the TAR format.
 
 | `license`
-| String
+| Boolean
 | No
-| Flag to enable license scanning.
+| The option to perform license scanning.
+Specify `license: true` to perform license scanning.
 
 |===
 
@@ -34,9 +36,9 @@ In your YAML file, add:
 ----
 
       - name: Scan with Trivy
-        uses: https://github.com/cloudbees-io/trivy-plugin@v1
+        uses: cloudbees-io/trivy-plugin@v1
         with:
-          binary-tar-path: tar file path that needs to be scanned
+          binary-tar-path: /path/to/binary.tar
 
 ----
 
