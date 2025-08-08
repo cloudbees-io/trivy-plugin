@@ -11,12 +11,28 @@ inputs:
     description: 'Flag to enable license scanning (true/false)'
     required: false
     default: ''
+outputs:
+  critical-count:
+    description: A string containing the number of Critical security findings discovered during the scan.
+    value: ${{steps.process-outputs.outputs.critical-count}}
+  very-high-count:
+    description: A string containing the number of Very High security findings discovered during the scan.
+    value: ${{steps.process-outputs.outputs.very-high-count}}
+  high-count:
+    description: A string containing the number of High security findings discovered during the scan.
+    value: ${{steps.process-outputs.outputs.high-count}}
+  medium-count:
+    description: A string containing the number of Medium security findings discovered during the scan.
+    value: ${{steps.process-outputs.outputs.medium-count}}
+  low-count:
+    description: A string containing the number of Low security findings discovered during the scan.
+    value: ${{steps.process-outputs.outputs.low-count}}
 
 runs:
   using: composite
   steps:
     - name: Generate reference files 
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:0dea78066b1aecbca8a3a6674aade8ee49b5d57a
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:2312e778e9df96bc098dde0a12c6c1857c8eec54
       with:
           entrypoint: assets-plugin-chain-utils
           args: generate-references --asset-type "BINARY" --tags "BINARY_CONTAINER" --binary-tar-path ${{ inputs.binary-tar-path }}
@@ -39,7 +55,7 @@ runs:
         fi
 
     - name: Complete execution plan
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:0dea78066b1aecbca8a3a6674aade8ee49b5d57a
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:2312e778e9df96bc098dde0a12c6c1857c8eec54
       id: process-outputs
       with:
           entrypoint: assets-plugin-chain-utils
