@@ -1,6 +1,7 @@
 = CloudBees action: Scan with Trivy
 
 Use this action to scan container images with the Trivy scanner, to identify and fix security vulnerabilities.
+You can also use the action output as a quality gate for the next step or job in your workflow.
 
 == Inputs
 
@@ -28,9 +29,44 @@ Specify `license: true` to perform license scanning.
 
 |===
 
-== Usage example
 
-In your YAML file, add:
+== Outputs
+
+[cols="2a,1a,4a",options="header"]
+.Output details
+|===
+
+| Output name
+| Data type
+| Description
+
+| `critical-count`
+| String
+| The number of *Critical* security findings discovered during the scan.
+
+| `very-high-count`
+| String
+| The number of *Very high* security findings discovered during the scan.
+
+| `high-count`
+| String
+| The number of *High* security findings discovered during the scan.
+
+| `medium-count`
+| String
+| The number of *Medium* security findings discovered during the scan.
+
+| `low-count`
+| String
+| The number of *Low* security findings discovered during the scan.
+
+|===
+
+== Usage examples
+
+=== Basic example
+
+The following is a basic example of using the action:
 
 [source,yaml]
 ----
@@ -44,7 +80,7 @@ In your YAML file, add:
 
 === Using the action output
 
-Access the output values in downstream steps and jobs using the `outputs` https://docs.cloudbees.com/docs/cloudbees-platform/latest/dsl-syntax/contexts[context].
+Access the output values in downstream steps and jobs using the `outputs` link:https://docs.cloudbees.com/docs/cloudbees-platform/latest/dsl-syntax/contexts[context].
 
 Use the output in your workflow as follows, where <action_step_ID> is the action step ID, and <severity> is an output parameter name, such as `critical-count`:
 
@@ -171,5 +207,5 @@ link:https://opensource.org/license/mit/[MIT license].
 == References
 
 * Learn more about link:https://docs.cloudbees.com/docs/cloudbees-platform/latest/actions[using actions in CloudBees workflows].
-* Learn about link:https://docs.cloudbees.com/docs/cloudbees-platform/latest/[the CloudBees platform].
+* Learn about link:https://docs.cloudbees.com/docs/cloudbees-platform/latest/[CloudBees platform].
 
