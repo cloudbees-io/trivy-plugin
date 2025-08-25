@@ -42,6 +42,127 @@ In your YAML file, add:
 
 ----
 
+=== Using the action output
+
+Access the output values in downstream steps and jobs using the `outputs` https://docs.cloudbees.com/docs/cloudbees-platform/latest/dsl-syntax/contexts[context].
+
+Use the output in your workflow as follows, where <action_step_ID> is the action step ID, and <severity> is an output parameter name, such as `critical-count`:
+
+[source,yaml]
+----
+${{steps.<action_step_ID>.outputs.<severity>}}
+----
+
+The following example uses the action output in a downstream step of the same job:
+
+[source,yaml,role="default-expanded"]
+----
+
+name: my-workflow
+kind: workflow
+apiVersion: automation.cloudbees.io/v1alpha1
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  scm-token-own: read
+  scm-token-org: read
+  id-token: write
+
+jobs:
+  trivy-scan-job:
+    steps:
+      - name: check out source code
+        uses: cloudbees-io/checkout@v1
+
+      - id: trivy-step
+        name: trivy scan
+        uses: cloudbees-io/trivy-plugin@v1
+        with:
+          binary-tar-path: /path/to/binary.tar
+
+      - name: source dir examine
+        uses: docker://golang:1.20.3-alpine3.17
+        shell: sh
+        run: |
+          ls -latR /cloudbees/workspace
+
+      - id: print-outputs-from-trivy-step
+        name: print outputs from upstream trivy step
+        uses: docker://alpine:latest
+        run: |
+            #printing all outputs
+            echo "Outputs from upstream trivy step:"
+            echo "Critical count: ${{steps.trivy-step.outputs.critical-count}}"
+            echo "Very high count: ${{steps.trivy-step.outputs.very-high-count}}"
+            echo "High count: ${{steps.trivy-step.outputs.high-count}}"
+            echo "Medium count: ${{steps.trivy-step.outputs.medium-count}}"
+            echo "Low count: ${{steps.trivy-step.outputs.low-count}}"
+
+
+----
+
+The following example uses the action output in a downstream job:
+
+[source,yaml,role="default-expanded"]
+----
+
+name: my-workflow
+kind: workflow
+apiVersion: automation.cloudbees.io/v1alpha1
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  scm-token-own: read
+  scm-token-org: read
+  id-token: write
+
+jobs:
+  job1:
+    outputs:
+      trivy-job-output-critical: ${{ steps.trivy-step.outputs.critical-count }}
+      trivy-job-output-very-high: ${{ steps.trivy-step.outputs.very-high-count }}
+      trivy-job-output-high: ${{ steps.trivy-step.outputs.high-count }}
+      trivy-job-output-medium: ${{ steps.trivy-step.outputs.medium-count }}
+      trivy-job-output-low: ${{ steps.trivy-step.outputs.low-count }}
+    steps:
+      - name: check out source code
+        uses: cloudbees-io/checkout@v1
+        with:
+          repository: my-gh-repo-org/my-repo
+          ref: main
+          token: ${{ secrets.GIT_PAT }}
+
+      - id: trivy-step
+        name: trivy scan
+        uses: cloudbees-io/trivy-plugin@v1
+        with:
+          binary-tar-path: /path/to/binary.tar
+
+  job2:
+    needs: job1
+    steps:
+      - id: print-outputs-from-job1
+        name: print outputs from upstream job1
+        uses: docker://alpine:latest
+        run: |
+          # Printing all outputs
+          echo "Outputs from upstream trivy job:"
+          echo "Critical count: ${{ needs.job1.outputs.trivy-job-output-critical }}"
+          echo "Very high count: ${{ needs.job1.outputs.trivy-job-output-very-high }}"
+          echo "High count: ${{ needs.job1.outputs.trivy-job-output-high }}"
+          echo "Medium count: ${{ needs.job1.outputs.trivy-job-output-medium }}"
+          echo "Low count: ${{ needs.job1.outputs.trivy-job-output-low }}"
+
+----
+
 == License
 
 This code is made available under the 
