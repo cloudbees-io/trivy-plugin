@@ -60,6 +60,10 @@ Specify `license: true` to perform license scanning.
 | String
 | The number of *Low* security findings discovered during the scan.
 
+| `policy-subject`
+| JSON
+| A JSON value containing details about the vulnerability scan summary and details.
+
 |===
 
 == Usage examples
@@ -137,6 +141,7 @@ jobs:
             echo "High count: ${{steps.trivy-step.outputs.high-count}}"
             echo "Medium count: ${{steps.trivy-step.outputs.medium-count}}"
             echo "Low count: ${{steps.trivy-step.outputs.low-count}}"
+            echo "Policy subject: ${{steps.trivy-step.outputs.policy-subject}}"
 
 
 ----
@@ -168,6 +173,7 @@ jobs:
       trivy-job-output-high: ${{ steps.trivy-step.outputs.high-count }}
       trivy-job-output-medium: ${{ steps.trivy-step.outputs.medium-count }}
       trivy-job-output-low: ${{ steps.trivy-step.outputs.low-count }}
+      trivy-job-output-policy-subject: ${{ steps.trivy-step.outputs.policy-subject }}
     steps:
       - name: check out source code
         uses: cloudbees-io/checkout@v1
@@ -196,6 +202,7 @@ jobs:
           echo "High count: ${{ needs.job1.outputs.trivy-job-output-high }}"
           echo "Medium count: ${{ needs.job1.outputs.trivy-job-output-medium }}"
           echo "Low count: ${{ needs.job1.outputs.trivy-job-output-low }}"
+          echo "Policy subject: ${{ needs.job1.outputs.trivy-job-output-policy-subject }}"
 
 ----
 
