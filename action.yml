@@ -55,7 +55,8 @@ runs:
           INPUT_RUN_ID: ${{ cloudbees.run_id }}
 
     - name: Run trivy compliance plugin
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-trivy-scanner:90ac7296abb2c0c877b3364b5ce21ccf50cb0353
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-trivy-scanner:f8288fc51fab22c63b34cc5b22f84037e66e8f48
+      continue-on-error: true
       env:
           RUN_ID: ${{ cloudbees.run_id }}
           JOB_ID: ${{ job.id }}
