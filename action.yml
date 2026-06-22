@@ -34,8 +34,18 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Clear asset store for container scan
+      uses: docker://alpine:latest
+      shell: sh
+      run: |
+        find $CLOUDBEES_WORKSPACE/store -mindepth 2 -maxdepth 2 \
+          -type d ! -name "discovered-profile-findings" \
+          -exec rm -rf {} +
+        rm -rf $CLOUDBEES_WORKSPACE/store/binary-assets
+        rm -rf $CLOUDBEES_WORKSPACE/store/request
+
     - name: Generate reference files
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:eda1f86aa17218e8779fae9ff1ac9161b708d07e
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:9b7088fcf5c8b127bc33b3caf9ed24a0124fe4e8
       with:
           entrypoint: assets-plugin-chain-utils
           args: generate-references --asset-type "BINARY" --tags "BINARY_CONTAINER" --binary-tar-path ${{ inputs.binary-tar-path }}
@@ -58,7 +68,7 @@ runs:
         fi
 
     - name: Complete execution plan
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:eda1f86aa17218e8779fae9ff1ac9161b708d07e
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:9b7088fcf5c8b127bc33b3caf9ed24a0124fe4e8
       id: process-outputs
       with:
           entrypoint: assets-plugin-chain-utils
