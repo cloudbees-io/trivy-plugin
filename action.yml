@@ -47,7 +47,7 @@ runs:
         fi
 
     - name: Generate reference files
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:b7c296b5efb441752869a1f9e2e57a259f9cb6ce
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:afe4ff56adcf637d9719123748fac8b4cdfd59a7
       with:
           entrypoint: assets-plugin-chain-utils
           args: generate-references --asset-type "BINARY" --tags "BINARY_CONTAINER" --binary-tar-path ${{ inputs.binary-tar-path }}
@@ -71,7 +71,7 @@ runs:
         fi
 
     - name: Complete execution plan
-      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:b7c296b5efb441752869a1f9e2e57a259f9cb6ce
+      uses: docker://public.ecr.aws/l7o7z1g8/actions/assets-plugin-chain-utils:afe4ff56adcf637d9719123748fac8b4cdfd59a7
       id: process-outputs
       with:
           entrypoint: assets-plugin-chain-utils
